@@ -16,11 +16,6 @@ const canvas = document.querySelector("canvas");
 
 const ctx = canvas.getContext("2d");
 
-const allColors = [null, blue, cyan, green, orange, purple, red, yellow];
-
-/** @type {<T>(arr: T[]) => T} */
-const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
-
 /** @type {import('./square.js').DrawFull} */
 const drawLineV = (ctx, colors, x, y) => {
   const pX = (x + 6) * 30;
@@ -41,7 +36,7 @@ const drawLineH = (ctx, colors, x, y) => {
   square(ctx, colors, pX + 3 * 30, pY);
 };
 
-const render = () => {
+const initRender = () => {
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
@@ -56,6 +51,12 @@ const render = () => {
       square(ctx, wall, x * 30, y * 30);
     }
   }
+};
+
+const updateRender = () => {
+  ctx.canvas.style.border = input.pause ? "3px solid red" : "";
+  ctx.fillStyle = "black";
+  ctx.fillRect(6 * 30, 1 * 30, 10 * 30, 20 * 30);
 };
 
 const input = {
@@ -96,6 +97,7 @@ const lineVHeight = 4;
 const lineVWidth = 1;
 
 const update = () => {
+  if (input.pause) return;
   state.x = clamp(
     0,
     10 - lineVWidth,
@@ -110,8 +112,9 @@ const update = () => {
 
 const main = () => {
   update();
-  render();
+  updateRender();
   drawLineV(ctx, cyan, state.x, state.y);
 };
 
+initRender();
 main();
