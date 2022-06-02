@@ -20,6 +20,10 @@ const ctx = canvas.getContext("2d");
 const drawLineV = (ctx, colors, x, y) => {
   const pX = (x + 6) * 30;
   const pY = (y + 1) * 30;
+  outline(ctx, colors.middle, pX, 17 * 30);
+  outline(ctx, colors.middle, pX, 18 * 30);
+  outline(ctx, colors.middle, pX, 19 * 30);
+  outline(ctx, colors.middle, pX, 20 * 30);
   square(ctx, colors, pX, pY + 0 * 30);
   square(ctx, colors, pX, pY + 1 * 30);
   square(ctx, colors, pX, pY + 2 * 30);
