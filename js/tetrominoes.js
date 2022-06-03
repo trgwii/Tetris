@@ -58,19 +58,35 @@ export class Tetromino {
     }
   }
 
-  /** @type {() => [number, number]} */
+  /** @type {() => { minWidth: number, minHeight: number, maxWidth: number, maxHeight: number }} */
   bounds() {
+    let minWidth = Infinity;
+    let minHeight = Infinity;
     let maxWidth = 0;
     let maxHeight = 0;
     for (let y = 0; y < 4; y++) {
       for (let x = 0; x < 4; x++) {
         if (this.shape[y * 4 + x]) {
+          if (minWidth > x) minWidth = x;
           if (maxWidth < x) maxWidth = x;
+          if (minHeight > y) minHeight = y;
           if (maxHeight < y) maxHeight = y;
         }
       }
     }
-    return [maxWidth, maxHeight];
+    return { minWidth, minHeight, maxWidth, maxHeight };
+  }
+
+  /** @type {(board: number[], boardX: number, boardY: number, boardWidth: number) => void} */
+  materialize(board, boardX, boardY, boardWidth) {
+    for (let y = 0; y < 4; y++) {
+      for (let x = 0; x < 4; x++) {
+        if (this.shape[y * 4 + x]) {
+          board[(boardY + y) * boardWidth + (boardX + x)] = tetrominoes
+            .findIndex((v) => v?.name === this.name);
+        }
+      }
+    }
   }
 
   debugPrint() {
@@ -87,6 +103,7 @@ const O = false;
 
 // deno-fmt-ignore
 export const tetrominoes = [
+  ,
   new Tetromino("I", [
     O, O, X, O,
     O, O, X, O,
