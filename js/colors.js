@@ -1,8 +1,8 @@
 //@ts-check
 
-/** @typedef {import('./square.js').SquareColorInfo} SquareColorInfo */
+/** @typedef {import('./square.js').ColorInfo} ColorInfo */
 
-/** @type {SquareColorInfo} */
+/** @type {ColorInfo} */
 export const wall = {
   middle: "#777777",
   top: "#D6D6D6",
@@ -11,7 +11,7 @@ export const wall = {
   left: "#A0A0A0",
 };
 
-/** @type {SquareColorInfo} */
+/** @type {ColorInfo} */
 export const cyan = {
   middle: "#00FFFF",
   top: "#B3FFFF",
@@ -20,7 +20,7 @@ export const cyan = {
   left: "#4DFFFF",
 };
 
-/** @type {SquareColorInfo} */
+/** @type {ColorInfo} */
 export const orange = {
   middle: "#FF7700",
   top: "#FFD6B3",
@@ -29,7 +29,7 @@ export const orange = {
   left: "#FFA04D",
 };
 
-/** @type {SquareColorInfo} */
+/** @type {ColorInfo} */
 export const purple = {
   middle: "#CC00CC",
   top: "#F0B3F0",
@@ -38,7 +38,7 @@ export const purple = {
   left: "#DB4DDB",
 };
 
-/** @type {SquareColorInfo} */
+/** @type {ColorInfo} */
 export const red = {
   middle: "#FF0000",
   top: "#FFB3B3",
@@ -47,7 +47,7 @@ export const red = {
   left: "#FF4D4D",
 };
 
-/** @type {SquareColorInfo} */
+/** @type {ColorInfo} */
 export const yellow = {
   middle: "#FFFF00",
   top: "#FFFFB3",
@@ -56,7 +56,7 @@ export const yellow = {
   left: "#FFFF4D",
 };
 
-/** @type {SquareColorInfo} */
+/** @type {ColorInfo} */
 export const green = {
   middle: "#00FF00",
   top: "#B3FFB3",
@@ -65,7 +65,7 @@ export const green = {
   left: "#4DFF4D",
 };
 
-/** @type {SquareColorInfo} */
+/** @type {ColorInfo} */
 export const blue = {
   middle: "#0000AA",
   top: "#B3B3E6",

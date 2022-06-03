@@ -1,58 +1,67 @@
 //@ts-check
 
 import { outline, square } from "./square.js";
-import {
-  blue,
-  cyan,
-  green,
-  orange,
-  purple,
-  red,
-  wall,
-  yellow,
-} from "./colors.js";
+import { cyan, wall } from "./colors.js";
+import { tetrominoes } from "./tetrominoes.js";
 
 const canvas = document.querySelector("canvas");
 
 const ctx = canvas.getContext("2d");
 
+const gameWidthPx = ctx.canvas.width;
+const gameHeightPx = ctx.canvas.height;
+
+const cellSize = 30;
+
+const gameWidth = Math.floor(gameWidthPx / cellSize);
+const gameHeight = Math.floor(gameHeightPx / cellSize);
+
+const boardWidth = 10;
+const boardHeight = 20;
+
+const boardOffsetX = 6;
+const boardOffsetY = 1;
+
 /** @type {import('./square.js').DrawFull} */
 const drawLineV = (ctx, colors, x, y) => {
-  const pX = (x + 6) * 30;
-  const pY = (y + 1) * 30;
-  outline(ctx, colors.middle, pX, 17 * 30);
-  outline(ctx, colors.middle, pX, 18 * 30);
-  outline(ctx, colors.middle, pX, 19 * 30);
-  outline(ctx, colors.middle, pX, 20 * 30);
-  square(ctx, colors, pX, pY + 0 * 30);
-  square(ctx, colors, pX, pY + 1 * 30);
-  square(ctx, colors, pX, pY + 2 * 30);
-  square(ctx, colors, pX, pY + 3 * 30);
+  const pX = (x + boardOffsetX) * cellSize;
+  const pY = (y + boardOffsetY) * cellSize;
+  outline(ctx, colors.middle, pX, 17 * cellSize, cellSize);
+  outline(ctx, colors.middle, pX, 18 * cellSize, cellSize);
+  outline(ctx, colors.middle, pX, 19 * cellSize, cellSize);
+  outline(ctx, colors.middle, pX, 20 * cellSize, cellSize);
+  square(ctx, colors, pX, pY + 0 * cellSize, cellSize);
+  square(ctx, colors, pX, pY + 1 * cellSize, cellSize);
+  square(ctx, colors, pX, pY + 2 * cellSize, cellSize);
+  square(ctx, colors, pX, pY + 3 * cellSize, cellSize);
 };
 
 /** @type {import('./square.js').DrawFull} */
 const drawLineH = (ctx, colors, x, y) => {
-  const pX = (x + 6) * 30;
-  const pY = (y + 1) * 30;
-  square(ctx, colors, pX + 0 * 30, pY);
-  square(ctx, colors, pX + 1 * 30, pY);
-  square(ctx, colors, pX + 2 * 30, pY);
-  square(ctx, colors, pX + 3 * 30, pY);
+  const pX = (x + boardOffsetX) * cellSize;
+  const pY = (y + boardOffsetY) * cellSize;
+  square(ctx, colors, pX + 0 * cellSize, pY, cellSize);
+  square(ctx, colors, pX + 1 * cellSize, pY, cellSize);
+  square(ctx, colors, pX + 2 * cellSize, pY, cellSize);
+  square(ctx, colors, pX + 3 * cellSize, pY, cellSize);
 };
 
 const initRender = () => {
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-  for (let y = 0; y < Math.floor(ctx.canvas.height / 30); y++) {
-    for (let x = 0; x < Math.floor(ctx.canvas.width / 30); x++) {
+  for (let y = 0; y < gameHeight; y++) {
+    for (let x = 0; x < gameWidth; x++) {
       // Game grid
-      if (y !== 0 && y !== 21 && x >= 6 && x < 16) {
+      if (
+        y >= boardOffsetY && y < boardHeight + boardOffsetY &&
+        x >= boardOffsetX && x < boardWidth + boardOffsetX
+      ) {
         continue;
       }
       // Next piece
       if (y > 0 && y <= 4 && x > 16 && x <= 20) continue;
-      square(ctx, wall, x * 30, y * 30);
+      square(ctx, wall, x * cellSize, y * cellSize, cellSize);
     }
   }
 };
@@ -60,7 +69,12 @@ const initRender = () => {
 const updateRender = () => {
   ctx.canvas.style.border = input.pause ? "3px solid red" : "";
   ctx.fillStyle = "black";
-  ctx.fillRect(6 * 30, 1 * 30, 10 * 30, 20 * 30);
+  ctx.fillRect(
+    boardOffsetX * cellSize,
+    boardOffsetY * cellSize,
+    boardWidth * cellSize,
+    boardHeight * cellSize,
+  );
 };
 
 const input = {
@@ -92,7 +106,7 @@ document.addEventListener("keyup", (e) => {
   if (k === "arrowleft" || k === "a") input.left = false;
 });
 
-const state = { x: 0, y: 0 };
+const state = { x: 0, y: 0, i: 0 };
 
 /** @type {(min: number, max: number, x: number) => number} */
 const clamp = (min, max, x) => x < min ? min : x > max ? max : x;
@@ -107,17 +121,30 @@ const update = () => {
     10 - lineVWidth,
     state.x + Number(input.right) - Number(input.left),
   );
+  if (input.space) {
+    state.i = (state.i + 1) % tetrominoes.length;
+  }
+  if (input.up) {
+    tetrominoes[state.i].rotate();
+  }
   state.y = clamp(
     0,
     20 - lineVHeight,
-    state.y + Number(input.down) - Number(input.up),
+    state.y + Number(input.down),
   );
 };
 
 const main = () => {
   update();
   updateRender();
-  drawLineV(ctx, cyan, state.x, state.y);
+  tetrominoes[state.i].draw(
+    ctx,
+    boardOffsetX,
+    boardOffsetY,
+    state.x,
+    state.y,
+    cellSize,
+  );
 };
 
 initRender();

@@ -7,20 +7,22 @@
  * right: string,
  * bottom: string,
  * left: string
- * }} SquareColorInfo
+ * }} ColorInfo
  */
 
-/** @typedef {(ctx: CanvasRenderingContext2D, color: string, x: number, y: number) => void} DrawSimple */
-/** @typedef {(ctx: CanvasRenderingContext2D, colors: SquareColorInfo, x: number, y: number) => void} DrawFull */
+/** @typedef {(ctx: CanvasRenderingContext2D, color: string, x: number, y: number, size: number) => void} DrawSimple */
+/** @typedef {(ctx: CanvasRenderingContext2D, colors: ColorInfo, x: number, y: number, size: number) => void} DrawFull */
 
 /** @type {DrawSimple} */
-const squareTop = (ctx, color, x, y) => {
+const squareTop = (ctx, color, x, y, size) => {
+  const sixth = Math.round((1 / 6) * size);
+  const twoThirds = Math.round((2 / 3) * size);
   const p = new Path2D();
   p.moveTo(x, y);
-  p.lineTo(x += 30, y);
-  p.lineTo(x -= 5, y += 5);
-  p.lineTo(x -= 20, y);
-  p.lineTo(x -= 5, y -= 5);
+  p.lineTo(x += size, y);
+  p.lineTo(x -= sixth, y += sixth);
+  p.lineTo(x -= twoThirds, y);
+  p.lineTo(x -= sixth, y -= sixth);
   p.closePath();
 
   ctx.fillStyle = color;
@@ -28,13 +30,15 @@ const squareTop = (ctx, color, x, y) => {
 };
 
 /** @type {DrawSimple} */
-const squareRight = (ctx, color, x, y) => {
+const squareRight = (ctx, color, x, y, size) => {
+  const sixth = Math.round((1 / 6) * size);
+  const twoThirds = Math.round((2 / 3) * size);
   const p = new Path2D();
-  p.moveTo(x += 30, y);
-  p.lineTo(x, y += 30);
-  p.lineTo(x -= 5, y -= 5);
-  p.lineTo(x, y -= 20);
-  p.lineTo(x += 5, y -= 5);
+  p.moveTo(x += size, y);
+  p.lineTo(x, y += size);
+  p.lineTo(x -= sixth, y -= sixth);
+  p.lineTo(x, y -= twoThirds);
+  p.lineTo(x += sixth, y -= sixth);
   p.closePath();
 
   ctx.fillStyle = color;
@@ -42,13 +46,15 @@ const squareRight = (ctx, color, x, y) => {
 };
 
 /** @type {DrawSimple} */
-const squareLeft = (ctx, color, x, y) => {
+const squareLeft = (ctx, color, x, y, size) => {
+  const sixth = Math.round((1 / 6) * size);
+  const twoThirds = Math.round((2 / 3) * size);
   const p = new Path2D();
   p.moveTo(x, y);
-  p.lineTo(x += 5, y += 5);
-  p.lineTo(x, y += 20);
-  p.lineTo(x -= 5, y += 5);
-  p.lineTo(x, y -= 30);
+  p.lineTo(x += sixth, y += sixth);
+  p.lineTo(x, y += twoThirds);
+  p.lineTo(x -= sixth, y += sixth);
+  p.lineTo(x, y -= size);
   p.closePath();
 
   ctx.fillStyle = color;
@@ -56,13 +62,15 @@ const squareLeft = (ctx, color, x, y) => {
 };
 
 /** @type {DrawSimple} */
-const squareBottom = (ctx, color, x, y) => {
+const squareBottom = (ctx, color, x, y, size) => {
+  const sixth = Math.round((1 / 6) * size);
+  const twoThirds = Math.round((2 / 3) * size);
   const p = new Path2D();
-  p.moveTo(x, y += 30);
-  p.lineTo(x += 5, y -= 5);
-  p.lineTo(x += 20, y);
-  p.lineTo(x += 5, y += 5);
-  p.lineTo(x -= 30, y);
+  p.moveTo(x, y += size);
+  p.lineTo(x += sixth, y -= sixth);
+  p.lineTo(x += twoThirds, y);
+  p.lineTo(x += sixth, y += sixth);
+  p.lineTo(x -= size, y);
   p.closePath();
 
   ctx.fillStyle = color;
@@ -70,19 +78,20 @@ const squareBottom = (ctx, color, x, y) => {
 };
 
 /** @type {DrawFull} */
-export const square = (ctx, colors, x, y) => {
+export const square = (ctx, colors, x, y, size) => {
   ctx.fillStyle = colors.middle;
-  ctx.fillRect(x, y, 30, 30);
-  squareBottom(ctx, colors.bottom, x, y);
-  squareRight(ctx, colors.right, x, y);
-  squareLeft(ctx, colors.left, x, y);
-  squareTop(ctx, colors.top, x, y);
+  ctx.fillRect(x, y, size, size);
+  squareBottom(ctx, colors.bottom, x, y, size);
+  squareRight(ctx, colors.right, x, y, size);
+  squareLeft(ctx, colors.left, x, y, size);
+  squareTop(ctx, colors.top, x, y, size);
 };
 
 /** @type {DrawSimple} */
-export const outline = (ctx, color, x, y) => {
+export const outline = (ctx, color, x, y, size) => {
+  const tenth = Math.round(0.1 * size);
   ctx.fillStyle = color;
-  ctx.fillRect(x, y, 30, 30);
+  ctx.fillRect(x, y, size, size);
   ctx.fillStyle = "black";
-  ctx.fillRect(x + 3, y + 3, 24, 24);
+  ctx.fillRect(x + tenth, y + tenth, size - tenth * 2, size - tenth * 2);
 };
