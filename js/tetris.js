@@ -118,7 +118,22 @@ const state = {
 };
 const forceDown = () => {
   const { minHeight, maxHeight } = state.cur.bounds();
+  const oldY = state.y;
   state.y = clamp(-minHeight, 20 - maxHeight - 1, state.y + 1);
+  if (state.y === oldY) {
+    state.cur.materialize(state.board, state.x, state.y, boardWidth);
+    const rand = tetrominoes.slice(
+      1,
+    )[Math.floor(Math.random() * tetrominoes.length - 1)];
+    state.cur = new Tetromino(rand.name, rand.shape, rand.colors);
+    const { minHeight, maxHeight } = state.cur
+      .bounds();
+    state.y = clamp(
+      -minHeight,
+      20 - maxHeight - 1,
+      0,
+    );
+  }
   main();
   state.t = setTimeout(forceDown, 1000);
 };
