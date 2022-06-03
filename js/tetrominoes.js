@@ -1,7 +1,7 @@
 //@ts-check
 
 import { blue, cyan, green, orange, purple, red, yellow } from "./colors.js";
-import { square } from "./square.js";
+import { outline, square } from "./square.js";
 
 /** @typedef {import('./square.js').ColorInfo} ColorInfo */
 
@@ -42,16 +42,35 @@ export class Tetromino {
     this.shape = newShape;
   }
 
-  /** @type {(ctx: CanvasRenderingContext2D, boardOffsetX: number, boardOffsetY: number, x: number, y: number, size: number) => void} */
-  draw(ctx, boardOffsetX, boardOffsetY, x, y, size) {
+  /** @type {(ctx: CanvasRenderingContext2D, boardOffsetX: number, boardOffsetY: number, x: number, y: number, size: number, drawOutline: boolean) => void} */
+  draw(ctx, boardOffsetX, boardOffsetY, x, y, size, drawOutline = false) {
     for (let i = 0; i < this.shape.length; i++) {
       if (!this.shape[i]) continue;
       const xOffset = i % 4;
       const yOffset = Math.floor(i / 4);
       const pX = (x + boardOffsetX + xOffset) * size;
       const pY = (y + boardOffsetY + yOffset) * size;
-      square(ctx, this.colors, pX, pY, size);
+      if (drawOutline) {
+        outline(ctx, this.colors.middle, pX, pY, size);
+      } else {
+        square(ctx, this.colors, pX, pY, size);
+      }
     }
+  }
+
+  /** @type {() => [number, number]} */
+  bounds() {
+    let maxWidth = 0;
+    let maxHeight = 0;
+    for (let y = 0; y < 4; y++) {
+      for (let x = 0; x < 4; x++) {
+        if (this.shape[y * 4 + x]) {
+          if (maxWidth < x) maxWidth = x;
+          if (maxHeight < y) maxHeight = y;
+        }
+      }
+    }
+    return [maxWidth, maxHeight];
   }
 
   debugPrint() {

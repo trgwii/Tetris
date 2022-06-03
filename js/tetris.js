@@ -8,10 +8,13 @@ const canvas = document.querySelector("canvas");
 
 const ctx = canvas.getContext("2d");
 
+ctx.canvas.height = Math.min(window.innerHeight, window.innerWidth);
+ctx.canvas.width = Math.min(window.innerHeight, window.innerWidth);
+
 const gameWidthPx = ctx.canvas.width;
 const gameHeightPx = ctx.canvas.height;
 
-const cellSize = 30;
+const cellSize = Math.floor(ctx.canvas.height / 22);
 
 const gameWidth = Math.floor(gameWidthPx / cellSize);
 const gameHeight = Math.floor(gameHeightPx / cellSize);
@@ -116,20 +119,24 @@ const lineVWidth = 1;
 
 const update = () => {
   if (input.pause) return;
-  state.x = clamp(
-    0,
-    10 - lineVWidth,
-    state.x + Number(input.right) - Number(input.left),
-  );
   if (input.space) {
     state.i = (state.i + 1) % tetrominoes.length;
   }
   if (input.up) {
     tetrominoes[state.i].rotate();
   }
+
+  const [maxWidth, maxHeight] = tetrominoes[state.i].bounds();
+
+  state.x = clamp(
+    0,
+    10 - maxWidth - 1,
+    state.x + Number(input.right) - Number(input.left),
+  );
+
   state.y = clamp(
     0,
-    20 - lineVHeight,
+    20 - maxHeight - 1,
     state.y + Number(input.down),
   );
 };
@@ -137,6 +144,16 @@ const update = () => {
 const main = () => {
   update();
   updateRender();
+  const [, maxHeight] = tetrominoes[state.i].bounds();
+  tetrominoes[state.i].draw(
+    ctx,
+    boardOffsetX,
+    boardOffsetY,
+    state.x,
+    20 - maxHeight - 1,
+    cellSize,
+    true,
+  );
   tetrominoes[state.i].draw(
     ctx,
     boardOffsetX,
