@@ -1,12 +1,16 @@
 //@ts-check
+///<reference lib="DOM" />
 
 import { outline, square } from "./square.js";
 import { cyan, wall } from "./colors.js";
 import { Tetromino, tetrominoes } from "./tetrominoes.js";
 
 const canvas = document.querySelector("canvas");
+if (!canvas) throw new Error("No canvas");
 
 const ctx = canvas.getContext("2d");
+
+if (!ctx) throw new Error("No ctx");
 
 ctx.canvas.height = Math.min(window.innerHeight, window.innerWidth);
 ctx.canvas.width = Math.min(window.innerHeight, window.innerWidth);
@@ -112,7 +116,11 @@ document.addEventListener("keyup", (e) => {
 const state = {
   x: 0,
   y: 0,
-  cur: new Tetromino("I", tetrominoes[1].shape, cyan),
+  cur: new Tetromino(
+    "I",
+    /** @type {Tetromino} */ (tetrominoes[1]).shape,
+    cyan,
+  ),
   t: 0,
   board: Array(boardWidth * boardHeight).fill(0),
 };
@@ -122,9 +130,9 @@ const forceDown = () => {
   state.y = clamp(-minHeight, 20 - maxHeight - 1, state.y + 1);
   if (state.y === oldY) {
     state.cur.materialize(state.board, state.x, state.y, boardWidth);
-    const rand = tetrominoes.slice(
+    const rand = /** @type {Tetromino} */ (tetrominoes.slice(
       1,
-    )[Math.floor(Math.random() * tetrominoes.length - 1)];
+    )[Math.floor(Math.random() * tetrominoes.length - 1)]);
     state.cur = new Tetromino(rand.name, rand.shape, rand.colors);
     const { minHeight, maxHeight } = state.cur
       .bounds();
@@ -193,9 +201,9 @@ const update = () => {
   if (input.down) {
     if (state.y === oldY) {
       state.cur.materialize(state.board, state.x, state.y, boardWidth);
-      const rand = tetrominoes.slice(
+      const rand = /** @type {Tetromino} */ (tetrominoes.slice(
         1,
-      )[Math.floor(Math.random() * tetrominoes.length - 1)];
+      )[Math.floor(Math.random() * tetrominoes.length - 1)]);
       state.cur = new Tetromino(rand.name, rand.shape, rand.colors);
       const { minHeight, maxHeight } = state.cur
         .bounds();
@@ -227,10 +235,15 @@ const main = () => {
     for (let x = 0; x < boardWidth; x++) {
       const val = state.board[y * boardWidth + x];
       if (val > 0) {
-        console.log(x, y, tetrominoes[val], val);
         const pX = (x + boardOffsetX) * cellSize;
         const pY = (y + boardOffsetY) * cellSize;
-        square(ctx, tetrominoes[val].colors, pX, pY, cellSize);
+        square(
+          ctx,
+          /** @type {Tetromino} */ (tetrominoes[val]).colors,
+          pX,
+          pY,
+          cellSize,
+        );
       }
     }
   }
